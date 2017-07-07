@@ -1,6 +1,7 @@
 package com.example.matt.stormy;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,9 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.matt.stormy.ui.AlertDialogFragment;
+import com.example.matt.stormy.ui.dailyForecast;
 import com.example.matt.stormy.weather.Current;
+import com.example.matt.stormy.weather.Day;
 import com.example.matt.stormy.weather.Forecast;
+import com.example.matt.stormy.weather.Hour;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +29,7 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -71,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         getForecast(latitude,longitude);
+
+        Log.d(TAG, "Main UI code is running!");
     }
 
     private void getForecast(double latitude, double longitude) {
@@ -169,8 +177,61 @@ public class MainActivity extends AppCompatActivity {
 
     private Forecast parseForecastDetails(String jsonData) throws JSONException {
         Forecast forecast = new Forecast();
+
         forecast.setCurrent(getCurrentDetails(jsonData));
+        forecast.setHourlyForecast(getHourlyForecast(jsonData));
+        forecast.setDailyForecast(getDailyForecast(jsonData));
+
+
         return forecast;
+    }
+
+    private Day[] getDailyForecast(String jsonData) throws JSONException{
+        JSONObject forecast = new JSONObject(jsonData);
+        String timezone = forecast.getString("timezone");
+        JSONObject daily = forecast.getJSONObject("daily");
+        JSONArray data = daily.getJSONArray("data");
+
+        Day[] days = new Day[data.length()];
+
+        for(int i=0;i<data.length();i++) {
+
+            JSONObject jsonDay = data.getJSONObject(i);
+            Day day = new Day();
+            day.setSummary(jsonDay.getString("summary"));
+            day.setTime(jsonDay.getLong("time"));
+            day.setTemperatureMax(jsonDay.getDouble("temperatureMax"));
+            day.setTimezone(timezone);
+
+            days[i] = day;
+
+        }
+
+        return days;
+    }
+
+    private Hour[] getHourlyForecast(String jsonData) throws JSONException {
+        JSONObject forecast = new JSONObject(jsonData);
+        String timezone = forecast.getString("timezone");
+        JSONObject hourly = forecast.getJSONObject("hourly");
+        JSONArray data = hourly.getJSONArray("data");
+
+        Hour[] hours = new Hour[data.length()];
+
+        for (int i=0; i<data.length(); i++) {
+            JSONObject jsonHour = data.getJSONObject(i);
+            //create new hour object
+            Hour hour = new Hour();
+            //fill in the hour object
+            hour.setSummary(jsonHour.getString("summary"));
+            hour.setTemperature(jsonHour.getDouble("temperature"));
+            hour.setIcon(jsonHour.getString("icon"));
+            hour.setTime(jsonHour.getLong("time"));
+            hour.setTimezone(timezone);
+
+            hours[i] = hour;
+        }
+        return hours;
     }
 
     private Current getCurrentDetails(String jsonData) throws JSONException {
@@ -209,5 +270,11 @@ public class MainActivity extends AppCompatActivity {
         AlertDialogFragment dialog = new AlertDialogFragment();
         dialog.show(getFragmentManager(), "error_dialog");
 
+    }
+
+    @OnClick (R.id.dailyButton)
+    public void startDailyActivity(View view) {
+        Intent intent = new Intent(this, dailyForecast.class);
+        startActivity(intent);
     }
 }
