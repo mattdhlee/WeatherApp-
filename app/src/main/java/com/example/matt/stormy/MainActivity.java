@@ -39,6 +39,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String DAILY_FORECAST = "DAILY_FORECAST";
 
     private Forecast mForecast;
 
@@ -91,11 +92,15 @@ public class MainActivity extends AppCompatActivity {
             toggleRefresh();
 
 
-            //In order: Client->Request->Call->call.enqueue(new Callback() ->
+
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(forecastUrl)
                     .build();
+
+
+
+
 
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
@@ -275,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
     @OnClick (R.id.dailyButton)
     public void startDailyActivity(View view) {
         Intent intent = new Intent(this, dailyForecast.class);
+        intent.putExtra(DAILY_FORECAST, mForecast.getDailyForecast());
         startActivity(intent);
     }
 }
