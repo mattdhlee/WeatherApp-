@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.matt.stormy.ui.AlertDialogFragment;
+import com.example.matt.stormy.ui.HourlyForecastActivity;
 import com.example.matt.stormy.ui.dailyForecast;
 import com.example.matt.stormy.weather.Current;
 import com.example.matt.stormy.weather.Day;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
+    public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
 
     private Forecast mForecast;
 
@@ -170,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateDisplay() {
         Current current = mForecast.getCurrent();
 
+
         mTemperatureLabel.setText(current.getTemperature()+"");
         mTimeLabel.setText("At " + current.getFormattedTime() + " it will be");
         mHumidityValue.setText(current.getHumidity() + "");
@@ -204,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
             JSONObject jsonDay = data.getJSONObject(i);
             Day day = new Day();
             day.setSummary(jsonDay.getString("summary"));
+            day.setIcon(jsonDay.getString("icon"));
             day.setTime(jsonDay.getLong("time"));
             day.setTemperatureMax(jsonDay.getDouble("temperatureMax"));
             day.setTimezone(timezone);
@@ -281,6 +285,13 @@ public class MainActivity extends AppCompatActivity {
     public void startDailyActivity(View view) {
         Intent intent = new Intent(this, dailyForecast.class);
         intent.putExtra(DAILY_FORECAST, mForecast.getDailyForecast());
+        startActivity(intent);
+    }
+
+    @OnClick (R.id.hourlyButton)
+    public void startHourlyActivity(View view) {
+        Intent intent = new Intent(this, HourlyForecastActivity.class);
+        intent.putExtra(HOURLY_FORECAST, mForecast.getHourlyForecast());
         startActivity(intent);
     }
 }

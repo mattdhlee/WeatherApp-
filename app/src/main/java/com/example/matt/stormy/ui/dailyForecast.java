@@ -3,8 +3,10 @@ package com.example.matt.stormy.ui;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Parcelable;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.example.matt.stormy.MainActivity;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 public class dailyForecast extends ListActivity {
 
 
+    private static final String TAG = "LISTACT";
     private Day[] mDays;
 
     @Override
@@ -36,8 +39,9 @@ public class dailyForecast extends ListActivity {
                 daysOfTheWeek);
         setListAdapter(adapter); */
 
-
+        Log.e(TAG, "test test");
         DayAdapter adapter = new DayAdapter(this, mDays);
+        setListAdapter(adapter);
 
 
 

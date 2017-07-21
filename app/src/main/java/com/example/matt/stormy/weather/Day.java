@@ -7,11 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-/**
- * Created by Matt on 2017-03-14.
- */
 
-public class Day implements Parcelable{
+public class Day implements Parcelable {
     private long mTime;
     private String mSummary;
     private double mTemperatureMax;
@@ -34,8 +31,8 @@ public class Day implements Parcelable{
         mSummary = summary;
     }
 
-    public double getTemperatureMax() {
-        return (int) Math.round(mTemperatureMax);
+    public int getTemperatureMax() {
+        return (int)Math.round(mTemperatureMax);
     }
 
     public void setTemperatureMax(double temperatureMax) {
@@ -76,17 +73,11 @@ public class Day implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        //write data of this object to destination (parcel)...
         dest.writeLong(mTime);
         dest.writeString(mSummary);
         dest.writeDouble(mTemperatureMax);
         dest.writeString(mIcon);
         dest.writeString(mTimezone);
-
-    }
-
-    public Day() {
-
     }
 
     private Day(Parcel in) {
@@ -96,6 +87,8 @@ public class Day implements Parcelable{
         mIcon = in.readString();
         mTimezone = in.readString();
     }
+
+    public Day() { }
 
     public static final Creator<Day> CREATOR = new Creator<Day>() {
         @Override
@@ -109,3 +102,14 @@ public class Day implements Parcelable{
         }
     };
 }
+
+
+
+
+
+
+
+
+
+
+
